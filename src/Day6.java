@@ -15,19 +15,39 @@ public class Day6 {
         Scanner input = new Scanner(new File("input/Day6.txt"));
         String[] strArray = input.nextLine().split("\\t");
         int[] banks = Arrays.stream(strArray).mapToInt(Integer::parseInt).toArray();
+        System.out.println("The number of cycles for part one is: " + getCycles(banks));
+        System.out.println("The size of the loop for part two is: " + getLoopSize(banks));
+    }
+
+    public static int getCycles(int[] arr) {
         int cycles = 0;
         ArrayList<String> states = new ArrayList<>();
-        while(!states.contains(Arrays.toString(banks))) {
-            states.add(Arrays.toString(banks));
-            int largest = getIndexOfLargest(banks);
-            int num = banks[largest];
-            banks[getIndexOfLargest(banks)] = 0;
-            for(int i = 1; i <= num; i++) {
-                banks[(largest + i) % banks.length]++;
-            }
+        while(!states.contains(Arrays.toString(arr))) {
+            states.add(Arrays.toString(arr));
+            redistribute(arr);
             cycles++;
         }
-        System.out.println("The number of cycles for part one is: " + cycles);
+        return cycles;
+    }
+
+    public static int getLoopSize(int[] arr) {
+        String original = Arrays.toString(arr);
+        redistribute(arr);
+        int loopSize = 1;
+        while(!Arrays.toString(arr).equals(original)) {
+            redistribute(arr);
+            loopSize++;
+        }
+        return loopSize;
+    }
+
+    public static void redistribute(int[] arr) {
+        int largest = getIndexOfLargest(arr);
+        int num = arr[largest];
+        arr[getIndexOfLargest(arr)] = 0;
+        for(int i = 1; i <= num; i++) {
+            arr[(largest + i) % arr.length]++;
+        }
     }
 
     public static int getIndexOfLargest(int[] arr) {
